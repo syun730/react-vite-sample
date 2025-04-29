@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [axiosPosts, setAxiosPosts] = useState([]);
+  const [axiosClickPosts, setAxiosClickPosts] = useState([]);
 
   useEffect(() => {
     // ページ読み込み時にAPI呼び出し！
@@ -23,6 +24,13 @@ const Home = () => {
       .catch((error) => console.error("axiosエラー:", error));
   }, []); // ← 空配列は「初回レンダリング時だけ動く」という意味
 
+  const getPostsByAxios = () => {
+    axios
+      .get("https://jsonplaceholder.typicode.com/posts")
+      .then((res) => setAxiosClickPosts(res.data))
+      .catch((err) => console.error("axiosエラー:", err));
+  };
+
   return (
     <>
       <Helmet>
@@ -33,6 +41,19 @@ const Home = () => {
       <main>
         <h2>ホーム</h2>
         <p>ここはコーポレートサイトのトップページです。</p>
+
+        <section>
+          <h2>クリックでaxios取得</h2>
+          <button onClick={getPostsByAxios}>axiosで記事を取得する</button>
+          <ul>
+            {axiosClickPosts.slice(0, 5).map((post) => (
+              <li key={post.id}>
+                <strong>{post.title}</strong>
+                <p>{post.body}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section>
           <h3>fetchで取得した記事一覧</h3>
